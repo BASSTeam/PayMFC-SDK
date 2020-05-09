@@ -26,7 +26,7 @@ class PayMFC{
     }
 
     function onRequest($callback){
-        header('Content-Type: paymfc-data');
+        header('Content-Type: application/paymfc-data');
         try{
             $req = $this -> checkSign(file_get_contents('php://input'));
             if($req === null) throw new Exception('Cannot parse data. Check data structure and signature.');
