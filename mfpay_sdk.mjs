@@ -1,6 +1,15 @@
 import { createHash } from 'crypto'
 import * as JSON from './JSON.mjs'
 
+function getRequestData(req){
+    return new Promise((resolve, reject) => {
+        let data = '';
+        req.on('data', chunk => data += chunk);
+        req.on('end', () => resolve(data));
+        req.on('error', reject)
+    })
+}
+
 class PayMFC{
     constructor(pubkey, privkey){
         this.pubkey = pubkey;
@@ -22,6 +31,24 @@ class PayMFC{
         const decodedData = JSON.parse(Buffer.from(data, 'base64'));
         if(signature === this.sign(decodedData).signature) return decodedData;
         return null
+    }
+
+    onRequest(server, targetURL, callback){
+        server.prependListener('request', async (req, res) => {
+            if(req.url === targetURL){
+                const data = await getRequestData(req);
+                res.writeHead(200, { 'Content-Type': 'application/paymfc-data' });
+                try{
+                    const decoded = this.checkSign(data);
+                    if(decoded === null) throw new Error('Cannot parse data. Check data structure and signature');
+                    const { txid } = decoded;
+                    const response = await callback(decoded);
+                    res.end(JSON.stringify(this.sign(Object.assign({}, response, { txid }))))
+                } catch(e){
+                    res.end(JSON.stringify({ error: e.message }))
+                }
+            }
+        })
     }
 
     link(product, callbackData = null){
