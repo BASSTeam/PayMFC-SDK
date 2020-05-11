@@ -1,2 +1,6 @@
 theme: jekyll-theme-cayman
 show_downloads: false
+lang: ru
+title: PayMFC
+github:
+    is_project_page: false
