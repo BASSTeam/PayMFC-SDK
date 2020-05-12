@@ -30,9 +30,7 @@ class PayMFC{
         try{
             $req = $this -> checkSign(file_get_contents('php://input'));
             if($req === null) throw new Exception('Cannot parse data. Check data structure and signature.');
-            $data = (array) $callback($req);
-            $data['txid'] = $req['txid'];
-            echo json_encode($this -> sign($data));
+            echo json_encode($this -> sign($callback($req)));
         } catch(Exception $e){
             echo json_encode([ 'error' => $e -> getMessage() ]);
         }
