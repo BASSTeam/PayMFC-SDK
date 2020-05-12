@@ -33,21 +33,17 @@ class PayMFC{
         return null
     }
 
-    onRequest(server, targetURL, callback){
-        server.prependListener('request', async (req, res) => {
-            if(req.url === targetURL){
-                const data = await getRequestData(req);
-                res.writeHead(200, { 'Content-Type': 'application/paymfc-data' });
-                try{
-                    const decoded = this.checkSign(data);
-                    if(decoded === null) throw new Error('Cannot parse data. Check data structure and signature');
-                    const response = await callback(decoded);
-                    res.end(JSON.stringify(this.sign(response)))
-                } catch(e){
-                    res.end(JSON.stringify({ error: e.message }))
-                }
-            }
-        })
+    async onRequest(req, res, callback){
+        const data = await getRequestData(req);
+        res.writeHead(200, { 'Content-Type': 'application/paymfc-data' });
+        try{
+            const decoded = this.checkSign(data);
+            if(decoded === null) throw new Error('Cannot parse data. Check data structure and signature');
+            const response = await callback(decoded);
+            res.end(JSON.stringify(this.sign(response)))
+        } catch(e){
+            res.end(JSON.stringify({ error: e.message }))
+        }
     }
 
     link(product, callbackData = null){

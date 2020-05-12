@@ -1,4 +1,4 @@
-import Net from 'net'
+import { IncomingMessage, ServerResponse } from 'http'
 
 type Request = {
     product: string
@@ -29,15 +29,13 @@ export default class PayMFC{
 
     /**
      * Binds listener for specified server and url. Callback may be both synchronous and asynchronous
-     * @param server Server to listen on
-     * @param targetURL Url to listen to
      * @param callback User-defined function that can deal with requests from PayMFC server
      */
-    onRequest(server: Net.Server, targetURL: string, callback: (req: Request | ConfirmRequest | DeclineRequest) => Promise<{
+    onRequest(req: IncomingMessage, res: ServerResponse, callback: (req: Request | ConfirmRequest | DeclineRequest) => Promise<{
         name: string
         price: number
         payment_address: string
-    } | void>): void
+    } | void>): Promise<void>
 
     /**
      * Generates mfcoin:// link for payment request
