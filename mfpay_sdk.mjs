@@ -41,9 +41,8 @@ class PayMFC{
                 try{
                     const decoded = this.checkSign(data);
                     if(decoded === null) throw new Error('Cannot parse data. Check data structure and signature');
-                    const { txid } = decoded;
                     const response = await callback(decoded);
-                    res.end(JSON.stringify(this.sign(Object.assign({}, response, { txid }))))
+                    res.end(JSON.stringify(this.sign(response)))
                 } catch(e){
                     res.end(JSON.stringify({ error: e.message }))
                 }
