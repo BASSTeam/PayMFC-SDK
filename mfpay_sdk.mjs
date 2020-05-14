@@ -47,7 +47,7 @@ class PayMFC{
     }
 
     link(product, callbackData = null){
-        let resolveUrl = `https://paymfc.ml:444/${this.pubkey}/${encodeURIComponent(product)}`;
+        let resolveUrl = `https://paymfc.ml/${this.pubkey}/${encodeURIComponent(product)}`;
         if(callbackData) resolveUrl += `?data=${encodeURIComponent(JSON.stringify(callbackData))}`;
         return `mfcoin://_?r=${encodeURIComponent(resolveUrl)}`
     }
