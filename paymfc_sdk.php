@@ -1,8 +1,8 @@
 <?php
 
 class PayMFC{
-    public string $pubkey;
-    protected string $privkey;
+    public $pubkey;
+    protected $privkey;
 
     function __construct($pubkey, $privkey){
         $this -> pubkey = $pubkey;
@@ -38,7 +38,7 @@ class PayMFC{
     }
 
     function link($product, $callbackData = null){
-        $resolve_url = 'https://paymfc.ml:444/' . $this -> pubkey . '/' . rawurlencode($product);
+        $resolve_url = 'https://paymfc.ml/' . $this -> pubkey . '/' . rawurlencode($product);
         if($callbackData) $resolve_url .= '?data=' . rawurlencode(json_encode($callbackData));
         return 'mfcoin://_?r=' . rawurlencode($resolve_url);
     }
